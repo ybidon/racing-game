@@ -7,8 +7,9 @@ let playerNumber;
 let players = [];
 const carWidth = 40;
 const carHeight = 20;
-const speed = 5;
-const turnSpeed = 3;
+const speed = 3;
+const turnSpeed = 2;
+const friction = 0.98;
 
 const keys = {
     ArrowUp: false,
@@ -59,22 +60,36 @@ function updateCarPosition() {
     const player = players.find(p => p.number === playerNumber);
     if (!player) return;
 
+    // Calculate movement based on rotation
+    const angle = player.rotation * Math.PI / 180;
     let dx = 0;
     let dy = 0;
-    let rotation = 0;
 
-    if (keys.ArrowUp) dy -= speed;
-    if (keys.ArrowDown) dy += speed;
-    if (keys.ArrowLeft) rotation -= turnSpeed;
-    if (keys.ArrowRight) rotation += turnSpeed;
+    if (keys.ArrowUp) {
+        dx = Math.sin(angle) * speed;
+        dy = -Math.cos(angle) * speed;
+    }
+    if (keys.ArrowDown) {
+        dx = -Math.sin(angle) * speed;
+        dy = Math.cos(angle) * speed;
+    }
 
+    // Apply friction
+    dx *= friction;
+    dy *= friction;
+
+    // Update position
     player.position.x += dx;
     player.position.y += dy;
-    player.rotation += rotation;
 
-    // Keep car within canvas bounds
-    player.position.x = Math.max(0, Math.min(canvas.width - carWidth, player.position.x));
-    player.position.y = Math.max(0, Math.min(canvas.height - carHeight, player.position.y));
+    // Update rotation
+    if (keys.ArrowLeft) player.rotation -= turnSpeed;
+    if (keys.ArrowRight) player.rotation += turnSpeed;
+
+    // Keep car within canvas bounds with padding
+    const padding = 20;
+    player.position.x = Math.max(padding, Math.min(canvas.width - carWidth - padding, player.position.x));
+    player.position.y = Math.max(padding, Math.min(canvas.height - carHeight - padding, player.position.y));
 
     socket.emit('updatePosition', {
         position: player.position,

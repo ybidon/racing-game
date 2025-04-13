@@ -1,16 +1,16 @@
 {
   "name": "game",
   "version": "1.0.0",
-  "description": "2-Player Racing Game",
-  "main": "src/server.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.7.2"
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
   }
 }
